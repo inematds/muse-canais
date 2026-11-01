@@ -1,0 +1,11 @@
+# Vem DESLIGADO. Ligar só com OK do Nei:
+#   cp systemd/muse-canais.* ~/.config/systemd/user/ && systemctl --user daemon-reload && systemctl --user enable --now muse-canais.timer
+[Unit]
+Description=muse-canais todo dia às 08:00
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

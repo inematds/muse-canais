@@ -1,0 +1,10 @@
+[Unit]
+Description=muse-canais — o que está funcionando nos canais
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:%h/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+WorkingDirectory=%h/projetos/muse-canais
+ExecStart=/usr/bin/python3 muse.py --ideias
+TimeoutStartSec=900
+MemoryMax=1G
