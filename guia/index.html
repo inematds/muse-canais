@@ -242,10 +242,10 @@
 
   <div class="step"><div class="b">5</div><div>
     <h3>Gere o relatório com as ideias</h3>
-    <p>Sem <code>--dry</code>, ele grava o relatório. Com <code>--ideias</code>, o Claude Code propõe 8 vídeos novos a partir dos vencedores (pode levar alguns minutos). Se nenhum vídeo passou de 2×, não há ideias nesse dia.</p>
+    <p>Sem <code>--dry</code>, ele grava o relatório. Com <code>--ideias</code>, o Claude Code propõe 8 vídeos novos a partir dos vencedores (pode levar alguns minutos). Se nenhum vídeo passou de 2×, não há ideias nesse dia. Se a lista tem vencedores e mesmo assim não saíram ideias, o problema é o Claude Code (não instalado ou sem login): teste com <code>claude -p "oi"</code>.</p>
 <pre><span class="k">python3</span> muse.py --ideias</pre>
     <p>O relatório fica em <code>~/projetos/output/muse-canais/&lt;data&gt;/muse.md</code> (para ler) e <code>muse.json</code> (os mesmos dados em JSON, o formato de texto que outros programas leem). Para gravar em outra pasta, defina <code>MUSE_SAIDA</code> antes do comando, ex.: <code>MUSE_SAIDA=~/relatorios python3 muse.py --ideias</code>.</p>
-    <p><b>Atenção:</b> o pedido das ideias está escrito para o INEMA (canais que ensinam IA). Para outro assunto, abra o <code>muse.py</code>, procure a linha que começa com <code>Você é o pauteiro do INEMA</code> e troque pela descrição dos seus canais. Duas linhas abaixo, troque também <code>NOSSOS canais</code> se quiser, e, mais abaixo, o exemplo <code>ex.: lives11</code> por um apelido do seu <code>canais.json</code>. Cada ideia sai com um formato: <code>short 9:16</code> (vídeo curto em pé), <code>16:9</code> (vídeo deitado comum) ou <code>carrossel</code> (post de várias imagens).</p>
+    <p><b>Atenção:</b> o pedido das ideias está escrito para o INEMA (canais que ensinam IA). Para outro assunto, abra o <code>muse.py</code>, procure a linha que começa com <code>Você é o pauteiro do INEMA</code> e troque pela descrição dos seus canais. Na linha logo abaixo, troque também <code>NOSSOS canais</code> se quiser, e, mais abaixo, o exemplo <code>ex.: lives11</code> por um apelido do seu <code>canais.json</code>. Cada ideia sai com um formato: <code>short 9:16</code> (vídeo curto em pé), <code>16:9</code> (vídeo deitado comum) ou <code>carrossel</code> (post de várias imagens).</p>
   </div></div>
 
   <div class="step"><div class="b">6</div><div>

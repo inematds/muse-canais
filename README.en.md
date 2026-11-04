@@ -31,7 +31,7 @@ Report: `~/projetos/output/muse-canais/<data>/muse.md` (and `muse.json`).
 | `--dry` | only prints |
 
 **Channels:** `canais.json` (key, name, address, public ID). At INEMA it is created from yt-pubx; elsewhere, write it by hand:
-`{"meucanal": {"nome": "Meu canal", "url": "https://www.youtube.com/@meucanal", "id": "UC…"}}` (the ID is obtained with `--atualiza-canais` if the address is correct).
+`{"meucanal": {"nome": "Meu canal", "url": "https://www.youtube.com/@meucanal", "id": "UC…"}}` (get the ID with `python3 -c "import muse; print(muse.resolver_id('https://www.youtube.com/@meucanal'))"`, run in the project folder; `--atualiza-canais` only works if you use yt-pubx).
 
 ## How the calculation works
 

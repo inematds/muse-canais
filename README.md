@@ -31,7 +31,7 @@ Relatório: `~/projetos/output/muse-canais/<data>/muse.md` (e `muse.json`).
 | `--dry` | só imprime |
 
 **Canais:** `canais.json` (chave, nome, endereço, ID público). No INEMA ele nasce do yt-pubx; fora dele, escreva à mão:
-`{"meucanal": {"nome": "Meu canal", "url": "https://www.youtube.com/@meucanal", "id": "UC…"}}` (o ID sai com `--atualiza-canais` se o endereço estiver certo).
+`{"meucanal": {"nome": "Meu canal", "url": "https://www.youtube.com/@meucanal", "id": "UC…"}}` (o ID sai com `python3 -c "import muse; print(muse.resolver_id('https://www.youtube.com/@meucanal'))"`, rodado na pasta do projeto; `--atualiza-canais` só serve para quem usa o yt-pubx).
 
 ## Como a conta é feita
 
