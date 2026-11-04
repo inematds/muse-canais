@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>muse-canais — what’s working on your YouTube channels</title>
+<meta name="description" content="A Python script that reads the public feeds of your YouTube channels, finds recent videos performing 2× above each channel’s norm, and turns the winners into new video ideas.">
+<link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/muse-canais/guia/">
+<link rel="alternate" hreflang="en" href="https://inematds.github.io/muse-canais/guia/en/">
+<link rel="alternate" hreflang="es" href="https://inematds.github.io/muse-canais/guia/es/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#FACC15; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#a16207; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    color-scheme:light;
+  }
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  body.light pre .k{color:#f0c070}
+  body.light .btn{background:#FACC15}
+  body.light .step .b{background:#FACC15}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  body.light nav{background:rgba(246,247,249,.85)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb)}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .lang{display:inline-flex;gap:2px;font-family:Sora;font-size:.78rem}
+  .lang a{color:var(--mut);padding:.2em .45em;border-radius:6px} .lang a.on{color:var(--amb);background:rgba(250,204,21,.12)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:760px){nav .links a.sec{display:none}}
+  @media(max-width:520px){nav .wrap{gap:8px;padding:8px 14px;height:auto;flex-wrap:wrap} nav .links{gap:8px;margin-left:0;width:100%;justify-content:space-between} nav .btn{padding:.45em .7em;font-size:.82rem} .tgl{width:34px;height:34px}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(250,204,21,.18),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;height:auto;display:block}
+  .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
+  .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:62ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.92rem;margin:0 0 .6em}
+  .card p:last-child{margin-bottom:0}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.85rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
+  pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;margin-bottom:26px}
+  .step>div,.card{min-width:0}
+  p code,li code,td code{overflow-wrap:anywhere}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:Sora;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  td.n{text-align:right;white-space:nowrap;font-family:"JetBrains Mono",monospace}
+  @media(max-width:540px){pre{white-space:pre-wrap;overflow-wrap:anywhere}}
+  @media(max-width:640px){
+    .tbl{overflow:visible;border:none;background:none}
+    .tbl table,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+    .tbl thead{display:none}
+    .tbl tr{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 0;margin-bottom:12px}
+    .tbl td{border:none;padding:4px 14px;text-align:left}
+    .tbl td::before{content:attr(data-label);display:block;font-family:Sora;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  }
+  .idea{margin-top:16px}
+  .idea h3{font-size:1rem;margin-bottom:.5em}
+  .idea p{margin:.25em 0}
+  .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .phase:last-child{border:none}
+  .phase .tag{flex:0 0 92px;font-family:Sora;font-weight:800;color:var(--amb)}
+  .phase .d strong{display:block;margin-bottom:.2em}
+  .phase .d span{color:var(--mut);font-size:.92rem}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:4px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">📈</span> muse-canais</a>
+  <span class="sep">|</span>
+  <span class="clubpro">
+    <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+    <span class="sep">-</span>
+    <a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a>
+  </span>
+  <div class="links">
+    <a class="sec" href="#oque">What it is</a>
+    <a class="sec" href="#fluxo">How it works</a>
+    <a class="sec" href="#guia">User guide</a>
+    <a class="sec" href="#exemplos">Example</a>
+    <a class="sec" href="#roadmap">Limitations</a>
+    <span class="lang"><a href="../">PT</a><a class="on" href="./">EN</a><a href="../es/">ES</a></span>
+    <button class="tgl" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+    <a class="btn" href="https://github.com/inematds/muse-canais" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Python · YouTube · Claude Code</span>
+      <h1>Find what’s already <span class="amb">working</span> on your channels</h1>
+      <p class="lead">It compares each recent video with that channel’s usual performance, highlights the ones doing much better, and turns those winners into new video ideas.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Start the guide</a>
+        <a class="btn ghost" href="https://github.com/inematds/muse-canais" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+    <figure><img src="../assets/banner-en.jpg" alt="muse-canais banner: what works on your YouTube channels"></figure>
+  </div>
+</header>
+
+<section id="resumo" class="resumo"><div class="wrap">
+  <span class="chip">In a nutshell</span>
+  <p>muse-canais is a Python script that checks your YouTube channels and shows which recent videos are performing well above each channel’s norm. It’s for people who publish frequently and want to repeat what works instead of guessing. It reads each channel’s public feed (the 15 most recent videos, with their view counts), with no login or API key, and compares each video’s view velocity with that of a typical video on the same channel. Videos that exceed 2 times the norm become “winners” and, if you ask, the script turns them into 8 new video ideas. You only need Python 3; the ideas are generated with Claude Code through your subscription.</p>
+</div></section>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">What it is</span>
+  <h2>A report on what to repeat, channel by channel</h2>
+  <p class="sub">Each channel is compared with itself. A small channel won’t disappear next to a large one.</p>
+  <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="../assets/banner-grade-en.jpg" alt="The six steps: public feed, velocity, channel norm, winners, 8 ideas, and your choice" loading="lazy" style="width:100%;display:block"></figure>
+  <div class="grid g3">
+    <div class="card"><h3>🔓 Public data only</h3><p>Reads the RSS feed YouTube provides for each channel (a file listing its most recent videos). No password, YouTube API, or API key required.</p></div>
+    <div class="card"><h3>📊 Fair comparison</h3><p>Measures each video’s views per hour and divides that by the channel median (the middle value, which isn’t skewed by an outlier). Anything above 2× is a winner.</p></div>
+    <div class="card"><h3>💡 Ideas you choose</h3><p>With <code>--ideias</code>, Claude Code reads the winners’ titles and numbers and suggests 8 new videos in the same style, with a title, hook, and format. Nothing is produced automatically: you choose.</p></div>
+  </div>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">How it works</span>
+  <h2>From feed to report</h2>
+  <p class="sub">One command does it all. Only the ideas step uses Claude Code; the script calculates everything else itself.</p>
+  <div class="flow">
+    <span>Channel list (canais.json)</span><span class="arr">→</span>
+    <span>Each channel’s public feed</span><span class="arr">→</span>
+    <span>Views per hour</span><span class="arr">→</span>
+    <span>Channel norm</span><span class="arr">→</span>
+    <span>Winners</span><span class="arr">→</span>
+    <span>8 ideas (optional)</span><span class="arr">→</span>
+    <span>Your choice</span>
+  </div>
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card"><h3>Velocity</h3><p>Views ÷ hours since publication. A video with 900 views in 100 hours gets 9 views per hour.</p></div>
+    <div class="card"><h3>Channel norm</h3><p>The median view velocity of channel videos older than 6 hours, with a floor of 0.5 per hour. This prevents a nearly inactive channel from making every video look like a hit.</p></div>
+    <div class="card"><h3>Winner</h3><p>At least 2× the norm (adjustable with <code>--limiar</code>), 6 hours to 30 days old, and at least 50 views. The report shows up to 15.</p></div>
+  </div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Requirements</span>
+  <h2>What you need</h2>
+  <p class="sub">No paid API key required. Runs on Linux, Mac, or Windows through WSL (Linux running inside Windows).</p>
+  <div class="grid g3">
+    <div class="card"><h3>Python 3 and git</h3><p>The script only uses what comes with Python; there’s nothing to install with pip. git downloads the project. Check that both are available on your machine:</p><pre><span class="k">python3</span> --version && <span class="k">git</span> --version</pre></div>
+    <div class="card"><h3>Claude Code (for ideas only)</h3><p>The <code>--ideias</code> option calls Claude Code through your subscription (install it from <a href="https://claude.com/claude-code" target="_blank" rel="noopener">claude.com/claude-code</a>). You need to be signed in: run <code>claude</code> once and sign in before using <code>--ideias</code>. Without it, the winners report works the same; you just won’t get the ideas.</p><pre><span class="k">claude</span> --version</pre></div>
+    <div class="card"><h3>Your channels’ addresses</h3><p>The link to each channel, such as <code>https://www.youtube.com/@seucanal</code>. You can use your own channel and other people’s channels you follow: the feed is public.</p></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">Step-by-step user guide</span>
+  <h2>From scratch to your first report</h2>
+  <p class="sub">Copyable commands, in order. Paste one block at a time into the terminal.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Download the project</h3>
+    <p>Copies the project into the <code>~/projetos/muse-canais</code> folder and moves into it.</p>
+<pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/muse-canais</span> ~/projetos/muse-canais
+<span class="k">cd</span> ~/projetos/muse-canais</pre>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Find each channel’s ID</h3>
+    <p>YouTube’s feed requires the channel ID (a code starting with <code>UC</code>), not the @handle. The script includes a function that finds this code from the channel address. Run it inside the project folder (after the <code>cd</code> in step 1). Replace <code>@seucanal</code> with your handle and repeat for each channel.</p>
+<pre><span class="k">python3</span> -c <span class="s">"import muse; print(muse.resolver_id('https://www.youtube.com/@seucanal'))"</span></pre>
+    <p>You’ll get something like <code>UC2QbQDyPKuHk93dwo5iq3Sw</code>. If you get <code>None</code>, check the address.</p>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Write your channel list</h3>
+    <p>The <code>canais.json</code> included in the project contains INEMA’s channels. Open the file in a terminal editor with <code>nano canais.json</code> (or in VS Code) and replace all its contents with your channels, one block per channel, separated by commas. Don’t delete the file; overwrite its contents. The first word in each block (<code>meucanal</code>, <code>segundo</code>) is a short nickname you choose; it’s used with the <code>--canais</code> option.</p>
+<pre>{
+  <span class="s">"meucanal"</span>: {<span class="s">"nome"</span>: <span class="s">"My channel"</span>, <span class="s">"url"</span>: <span class="s">"https://www.youtube.com/@meucanal"</span>, <span class="s">"id"</span>: <span class="s">"UC…"</span>},
+  <span class="s">"segundo"</span>: {<span class="s">"nome"</span>: <span class="s">"My second channel"</span>, <span class="s">"url"</span>: <span class="s">"https://www.youtube.com/@segundo"</span>, <span class="s">"id"</span>: <span class="s">"UC…"</span>}
+}</pre>
+    <p>Replace <code>UC…</code> with the ID from step 2. Channels without an ID are skipped. Watch the quotation marks and commas: if one is missing, or there’s an extra comma after the last channel, the script stops with an error. In <code>nano</code>, save with Ctrl+O and Enter, then exit with Ctrl+X. The <code>--atualiza-canais</code> option in the README is only for people who also use yt-pubx (INEMA’s publishing tool); if you wrote the list by hand, you don’t need it.</p>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Take a look without saving anything</h3>
+    <p>With <code>--dry</code>, it reads the feeds and only displays the winners on screen, without creating a file or history.</p>
+<pre><span class="k">python3</span> muse.py --dry</pre>
+    <p>The last line tells you how many videos it read, how many winners it found, and which channels were “unresponsive” (when YouTube refuses the feed at that time). If a channel is unresponsive, run it again later.</p>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Generate the report with ideas</h3>
+    <p>Without <code>--dry</code>, it saves the report. With <code>--ideias</code>, Claude Code suggests 8 new videos based on the winners (this may take a few minutes). If no video exceeded 2×, there are no ideas that day.</p>
+<pre><span class="k">python3</span> muse.py --ideias</pre>
+    <p>The report is saved to <code>~/projetos/output/muse-canais/&lt;data&gt;/muse.md</code> (for reading) and <code>muse.json</code> (the same data in JSON, a text format other programs can read). To save it elsewhere, set <code>MUSE_SAIDA</code> before running the command, for example: <code>MUSE_SAIDA=~/relatorios python3 muse.py --ideias</code>.</p>
+    <p><b>Note:</b> the prompt for ideas is written for INEMA (channels that teach AI). For a different topic, open <code>muse.py</code>, find the line that starts with <code>Você é o pauteiro do INEMA</code> (“You are INEMA’s editorial planner”), which is in Portuguese, and replace it with a description of your channels. Two lines below, also replace <code>NOSSOS canais</code> (“OUR channels”) if you like, and further down replace the example <code>ex.: lives11</code> (“e.g.: lives11”) with a nickname from your <code>canais.json</code>. Each idea comes with a format: <code>short 9:16</code> (vertical short video), <code>16:9</code> (standard landscape video), or <code>carrossel</code> (multi-image post).</p>
+  </div></div>
+
+  <div class="step"><div class="b">6</div><div>
+    <h3>Adjust things whenever you like</h3>
+    <p>You can combine the options. The names after <code>--canais</code> are the nicknames in your <code>canais.json</code>.</p>
+<p>12 ideas instead of 8:</p>
+<pre><span class="k">python3</span> muse.py --ideias --n <span class="s">12</span></pre>
+<p>Only videos at least 3× above the norm:</p>
+<pre><span class="k">python3</span> muse.py --limiar <span class="s">3</span></pre>
+<p>Only these channels:</p>
+<pre><span class="k">python3</span> muse.py --canais <span class="s">meucanal,segundo</span></pre>
+    <p>Starting with the second run (without <code>--dry</code>), the script also saves each video’s view counts in <code>estado/historico.jsonl</code> and records in <code>muse.json</code> how many views each video gained between runs. Whether a video is a winner is still determined by its view velocity since publication.</p>
+  </div></div>
+
+  <div class="step"><div class="b">7</div><div>
+    <h3>Run it automatically every day (optional)</h3>
+    <p>The project includes a Linux scheduler (systemd) that runs <code>muse.py --ideias</code> every day at 08:00. It’s disabled by default. It works on Linux and WSL with systemd enabled; macOS doesn’t have systemd, so run the command manually. The service expects the project at <code>~/projetos/muse-canais</code>. To enable it, from inside the project folder:</p>
+<pre><span class="k">mkdir -p</span> ~/.config/systemd/user
+<span class="k">cp</span> systemd/muse-canais.* ~/.config/systemd/user/
+<span class="k">systemctl</span> --user daemon-reload
+<span class="k">systemctl</span> --user enable --now muse-canais.timer</pre>
+  </div></div>
+
+  <p class="mut" style="margin-top:6px">If you also use <a href="https://github.com/inematds/radar-pautas" target="_blank" rel="noopener">radar-pautas</a> (another INEMA project, which brings together the day’s news and suggests topics), the day’s trending topics are included in the ideas prompt automatically.</p>
+</div></section>
+
+<section id="exemplos"><div class="wrap">
+  <span class="chip">Example</span>
+  <h2>A real run on INEMA’s channels</h2>
+  <p class="sub">Run from November 1, 2026: 270 videos from 18 channels. Below are 5 of the 15 winners and 2 of the 8 ideas, as they appeared in <code>muse.md</code> (in Portuguese, since these channels publish in Portuguese).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Channel</th><th>Video</th><th>Views</th><th>Age</th><th>× norm</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Channel">INEMA Tec</td><td data-label="Video">Você não precisa de mais tempo — precisa parar de fazer tudo à mão</td><td class="n" data-label="Views">532</td><td class="n" data-label="Age">20 h</td><td class="n" data-label="× norm">54.31×</td></tr>
+      <tr><td data-label="Channel">fin-adv</td><td data-label="Video">Bolsa caiu 13,88% num dia: Copom, dólar e dívida na semana que vem</td><td class="n" data-label="Views">1150</td><td class="n" data-label="Age">11 h</td><td class="n" data-label="× norm">48.0×</td></tr>
+      <tr><td data-label="Channel">INEMA FTD</td><td data-label="Video">Renda Acabando e Nenhuma Resposta? O Erro Que Você Repete Todo Dia</td><td class="n" data-label="Views">501</td><td class="n" data-label="Age">21 h</td><td class="n" data-label="× norm">25.72×</td></tr>
+      <tr><td data-label="Channel">INEMA Tec</td><td data-label="Video">A IA que não esquece mais nada: Claude Mem leva 1.723 estrelas e lider…</td><td class="n" data-label="Views">196</td><td class="n" data-label="Age">20 h</td><td class="n" data-label="× norm">19.23×</td></tr>
+      <tr><td data-label="Channel">eventosextremos-inema</td><td data-label="Video">Previsão do Dia: calorão agora e tempestade severa com granizo no Sul</td><td class="n" data-label="Views">6574</td><td class="n" data-label="Age">20 h</td><td class="n" data-label="× norm">5.72×</td></tr>
+    </tbody>
+  </table></div>
+  <p class="mut" style="font-size:.88rem;margin-top:10px">Notice the last video: 6574 views, but only 5.72× because that channel usually gets many more views. And 196 views already reached 19× on a channel that usually gets few.</p>
+  <div class="grid g2">
+    <div class="card idea"><h3>Você não precisa programar: um agente da IA faz isso no seu celular</h3><p><b>Hook:</b> Seu celular pode fazer sozinho aquilo que você repete todo dia na mão.</p><p><b>Why:</b> repete o "pare de fazer tudo à mão" (54×).</p><p><b>Format:</b> short 9:16</p></div>
+    <div class="card idea"><h3>Cinco IAs pequenas juntas venceram uma gigante. O que isso muda pra você</h3><p><b>Hook:</b> Uma IA sozinha erra. Cinco trabalhando em equipe acertaram mais.</p><p><b>Why:</b> segue o "Claude Mem lidera o GitHub" (19×): novidade técnica com placar concreto; o dado fica marcado "a confirmar".</p><p><b>Format:</b> short 9:16</p></div>
+  </div>
+</div></section>
+
+<section id="roadmap"><div class="wrap">
+  <span class="chip">Limitations and next steps</span>
+  <h2>What it doesn’t do</h2>
+  <p class="sub">So you know what to expect from the report.</p>
+  <div class="phase"><div class="tag">Limit</div><div class="d"><strong>Only the 15 most recent videos</strong><span>The public feed doesn’t include older videos, watch time, or audience retention.</span></div></div>
+  <div class="phase"><div class="tag">Limit</div><div class="d"><strong>Numbers are delayed by a few hours</strong><span>Views in the feed lag behind YouTube Studio, and sometimes YouTube refuses a channel’s feed; it appears as “unresponsive.”</span></div></div>
+  <div class="phase"><div class="tag">Limit</div><div class="d"><strong>Ideas only see titles and numbers</strong><span>They don’t watch the videos. Every fact or number about a new video needs its own source; the prompt says to mark it “to be confirmed.”</span></div></div>
+  <div class="phase"><div class="tag">1.0 ✔</div><div class="d"><strong>Feed, calculations, winners, and ideas</strong><span>Channel norm with a floor, a 6-hour to 30-day window, history between runs, 8 ideas, and daily scheduling ready (disabled).</span></div></div>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <div class="pill">Python 3</div><div class="pill">YouTube public RSS feed</div><div class="pill">Claude Code</div><div class="pill">systemd (optional)</div>
+    <p style="margin-top:18px">muse-canais · MIT-licensed code ·
+      <a href="https://github.com/inematds/muse-canais">inematds/muse-canais</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='muse-canais-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; }
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      localStorage.setItem(KEY, light?'light':'dark');
+    });
+  })();
+</script>
+</body>
+</html>

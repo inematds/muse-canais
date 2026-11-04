@@ -1,6 +1,10 @@
 # muse-canais
 
+[![muse-canais](guia/assets/banner-es.jpg)](https://inematds.github.io/muse-canais/guia/es/)
+
 **🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 Español**
+
+📖 **Guía de uso (landing + paso a paso):** **https://inematds.github.io/muse-canais/guia/es/**
 
 ## Qué es
 
